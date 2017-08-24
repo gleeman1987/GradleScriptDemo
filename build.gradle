@@ -1,0 +1,67 @@
+defaultTasks 'hello','task99'//设置默认的task，注意task名称前后的引号
+
+task hello {
+	description 'Hello! build script written by Zhengjun'
+	ext.myString = "adMin by ZhengJun"
+	ext.myProperty = "Android Engineering"
+	println "the default argument of task :"+it//the default argument of task :task ':hello'
+	doLast{
+		println 'Hello,Gradle!'
+	}
+}
+
+task upper(dependsOn:['hello','hi']) << {//注意此处依赖的名称前后的引号不能省略
+	println "the default argument of doLast :"+it//the default argument of doLast :task ':upper'
+	String my_name = 'zhEng_jUn'
+	println "my name is $my_name"//my name is zhEng_jUn
+	println "my name in uppercase is " + my_name.toUpperCase() //my name in uppercase is ZHENG_JUN
+}
+
+task count(dependsOn:upper) << {
+	10.times { print "$it  "}
+	10.times { print '$it  '}//0  1  2  3  4  5  6  7  8  9  $it  $it  $it  $it  $it  $it  $it  $it  $it  $it  注意单引号和双引号的区别
+}
+
+task hi << {//hi的声明在upper的后面，但upper依然可以依赖hi
+	println 'Hi,what can I do for you?'
+}
+
+100.times {
+	counter ->
+	task"task$counter"<<{
+		println "the task name is $it"
+		println "I am task $counter"
+	}
+}//此时如果查看tasks清单，则会显示此段代码产生的100个task
+
+task99.dependsOn task0,task1,task2,task3//操纵现有的tasks
+
+//给现有的task添加behavior
+task99.doFirst{
+	println "I am task99.doFirst"
+}
+task99.doFirst{
+	println "I am task99.doFirst2"
+}
+task99.doFirst{
+	println "I am task99.doFirst3"
+}//doFirst会按添加顺序倒序执行，亦即越后添加、越前执行
+
+task99.doLast{
+	println "I am task99.doLast"
+}
+/*The calls and can be executed multiple times. They add an action doFirst doLast to the beginning or
+the end of the task's actions list. When the task executes, the actions in the action list are executed in order.*/
+
+hello.doLast{
+	println "Greetings from the $hello.name task."
+	println hello.description
+	//println "hello.myString = $myString"先前定义的局部变量在此无法使用，只能ext
+	println "hello.myString = $myString"//hello.myString = adMin by ZhengJun
+	println "hello.myProperty = $hello.myProperty"//hello.myProperty = Android Engineering
+	test(hello.description, hello.myProperty)
+}
+
+def test(var1,var2){
+	println "var1 = $var1,var2 = $var2"
+}
