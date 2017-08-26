@@ -1,0 +1,4 @@
+
+	task hello2 << {
+		println 'this is :projectA:hello1'
+	}

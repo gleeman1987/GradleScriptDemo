@@ -1,4 +1,4 @@
-defaultTasks 'hello','task99'//设置默认的task，注意task名称前后的引号
+//defaultTasks 'hello','task99'//设置默认的task，注意task名称前后的引号
 
 task hello {
 	description 'Hello! build script written by Zhengjun'
@@ -60,8 +60,68 @@ hello.doLast{
 	println "hello.myString = $myString"//hello.myString = adMin by ZhengJun
 	println "hello.myProperty = $hello.myProperty"//hello.myProperty = Android Engineering
 	test(hello.description, hello.myProperty)
+	
+	println ">>> description = $description<<<"
 }
 
 def test(var1,var2){
 	println "var1 = $var1,var2 = $var2"
+	println gradle.taskGraph.hasTask(task98)
+	println gradle.taskGraph.hasTask(task1)
 }
+
+task distribution << {
+	println "We build the zip with version=$version"
+}
+
+task release (dependsOn:'distribution') << {
+	println 'We release now'
+}
+
+task99.doLast{
+	println 'gradle.taskGraph.hasTask(init):'+gradle.taskGraph.hasTask(init)
+	println 'gradle.taskGraph.hasTask(wrapper):'+gradle.taskGraph.hasTask(wrapper)
+}
+
+gradle.taskGraph.whenReady{
+	println "taskGraph = $it"
+	println "version = $version"
+	/*输出结果：
+		taskGraph = org.gradle.execution.taskgraph.DefaultTaskGraphExecuter@59caa2b2
+		version = unspecified*/
+	if (it.hasTask(release)){
+		version = '1.0'
+	} else {
+		version = '1.0-SNAPSHOT'
+	}
+}
+
+//TASK进阶
+task(hello1) << {
+	println 'hello1'
+	println "buildDir = $buildDir"
+	/*输出结果：
+		hello1
+		buildDir = /Users/zhengjun/Desktop/gradletest/build*/
+}
+
+task ('copy',type:Copy){
+	from(file('README.md'))
+	into(buildDir)
+}
+
+println ">>>"+copy.name
+println ">>>"+project.copy.name
+println ">>>"+tasks.copy.name
+println ">>>"+tasks['copy'].name
+/*输出结果：
+>>>copy
+>>>copy
+>>>copy
+>>>copy
+*/
+
+println tasks.getByPath('hello1').path
+println tasks.getByPath(':hello1').path
+println tasks.getByPath('projectA:hello2').path
+println tasks.getByPath(':projectA:hello2').path
