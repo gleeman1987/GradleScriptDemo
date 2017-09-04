@@ -84,8 +84,8 @@ task99.doLast{
 }
 
 gradle.taskGraph.whenReady{
-	//println "taskGraph = $it"
-	//println "version = $version"
+	println "taskGraph = $it"
+	println "version = $version"
 	/*输出结果：
 		taskGraph = org.gradle.execution.taskgraph.DefaultTaskGraphExecuter@59caa2b2
 		version = unspecified*/

@@ -30,5 +30,3 @@
 	hello2.dependsOn {
 		tasks.findAll{task -> task.name.startsWith('lib')}
 	}
-
-	hello2.description 'Copies the resource directory to the target directory.'

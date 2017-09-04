@@ -1,1 +1,1 @@
-include ':projectA'
+include ':projectA',':projectA:additional'
